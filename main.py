@@ -42,6 +42,10 @@ def send_event_to_orders_service(payload: Dict[str, Any]):
 
 @app.get("/", summary="Página de inicio y bienvenida")
 def root():
+    """
+    Ruta raíz de bienvenida que confirma que la API está en ejecución activa
+    y orienta al usuario hacia la documentación interactiva en /docs.
+    """
     return {
         "message": "Bienvenido a la API. El servicio está en ejecución correctamente.",
         "docs": "La documentación interactiva está disponible en la ruta /docs"
@@ -50,6 +54,10 @@ def root():
 
 @app.get("/health", summary="Verificar estado de salud del servicio")
 def health_check():
+    """
+    Endpoint de sondeo (health check) para monitoreo de la plataforma y Render.
+    Verifica que el servicio esté operativo y expone la URL configurada para orders-service.
+    """
     return {
         "status": "ok",
         "service": "catalog-web-service",
