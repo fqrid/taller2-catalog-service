@@ -40,6 +40,14 @@ def send_event_to_orders_service(payload: Dict[str, Any]):
         logger.error(f"Error al comunicar con orders-service en {target_url}: {str(e)}")
 
 
+@app.get("/", summary="Página de inicio y bienvenida")
+def root():
+    return {
+        "message": "Bienvenido a la API. El servicio está en ejecución correctamente.",
+        "docs": "La documentación interactiva está disponible en la ruta /docs"
+    }
+
+
 @app.get("/health", summary="Verificar estado de salud del servicio")
 def health_check():
     return {
