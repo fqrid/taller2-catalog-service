@@ -1,0 +1,361 @@
+{
+  "info": {
+    "_postman_id": "c0work1n-9988-44aa-bb11-8899aabbccdd",
+    "name": "Coworking Workshop API",
+    "description": "Colección organizada cronológicamente por laboratorios para probar catalog-service y orders-service con pruebas de caos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. LAB 1 - catalog-service (:8001)",
+      "description": "Endpoints del servicio de catálogo de espacios",
+      "item": [
+        {
+          "name": "1.1 Health Check (Catálogo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Servicio es catalog-service\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.service).to.eql(\"catalog-service\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.2 Listar Espacios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna lista de espacios\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an(\"array\");",
+                  "    pm.expect(jsonData.length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/spaces",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["spaces"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.3 Consultar Espacio por ID (1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"El ID consultado es 1\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.eql(1);",
+                  "    pm.expect(jsonData).to.have.property(\"price_per_hour\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/spaces/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["spaces", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. LAB 2 y 3 - orders-service (:8002)",
+      "description": "Endpoints del servicio de órdenes y reservas",
+      "item": [
+        {
+          "name": "2.1 Health Check (Órdenes)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Servicio es orders-service\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.service).to.eql(\"orders-service\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 Crear Orden (Consulta interna al Catálogo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Orden creada correctamente\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property(\"id\");",
+                  "    pm.expect(jsonData.status).to.eql(\"confirmed\");",
+                  "    pm.expect(jsonData.total_amount).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/orders?space_id=1&user_email=test@example.com&hours=2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["orders"],
+              "query": [
+                {
+                  "key": "space_id",
+                  "value": "1",
+                  "description": "ID del espacio en el catálogo"
+                },
+                {
+                  "key": "user_email",
+                  "value": "test@example.com",
+                  "description": "Correo del usuario que reserva"
+                },
+                {
+                  "key": "hours",
+                  "value": "2",
+                  "description": "Cantidad de horas reservadas"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 Listar Todas las Órdenes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna lista de órdenes\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.4 Consultar Orden por ID (1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna orden solicitada\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.eql(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/orders/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["orders", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. LAB 4 y 5 - Pruebas de Chaos Engineering",
+      "description": "Peticiones para verificar los escenarios de fallo",
+      "item": [
+        {
+          "name": "3.1 Probar Orden con Catálogo Caído (Esperado: 503)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 503 Service Unavailable\", function () {",
+                  "    pm.response.to.have.status(503);",
+                  "});",
+                  "pm.test(\"Detalle indica Catalog service unavailable\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.eql(\"Catalog service unavailable\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/orders?space_id=1&user_email=chaos@test.com&hours=2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["orders"],
+              "query": [
+                {
+                  "key": "space_id",
+                  "value": "1"
+                },
+                {
+                  "key": "user_email",
+                  "value": "chaos@test.com"
+                },
+                {
+                  "key": "hours",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Probar Orden con Contrato Roto (Esperado: 500)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 500 Error de Contrato\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8002/orders?space_id=1&user_email=contract@test.com&hours=2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8002",
+              "path": ["orders"],
+              "query": [
+                {
+                  "key": "space_id",
+                  "value": "1"
+                },
+                {
+                  "key": "user_email",
+                  "value": "contract@test.com"
+                },
+                {
+                  "key": "hours",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
