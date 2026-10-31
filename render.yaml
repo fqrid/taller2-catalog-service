@@ -2,8 +2,30 @@ services:
   - type: web
     name: catalog-service
     env: python
+    rootDir: catalog-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+
+  - type: web
+    name: orders-service
+    env: python
+    rootDir: orders-service
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: POSTGRES_URL
+        value: postgresql://orders_db_srhr_user:feXWf1AMw1bFY2oqggbUTzSwrtp9zrRv@dpg-dbj41q942hec73bvl9mg-a.ohio-postgres.render.com/orders_db_srhr
+      - key: CATALOG_SERVICE_URL
+        sync: false
+      - key: ANALYTICS_SERVICE_URL
+        sync: false
+
+  - type: web
+    name: analytics-service
+    env: python
+    rootDir: analytics-service
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: ORDERS_SERVICE_URL
-        sync: false
+      - key: MONGO_URI
+        value: mongodb+srv://faridzemanate_db_user:BnmNXRFB8RJ8RVZy@cluster0.kavgcce.mongodb.net/analytics_db?retryWrites=true&w=majority
